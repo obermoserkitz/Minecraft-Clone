@@ -25,8 +25,32 @@ var st = SurfaceTool.new()
 var mesh = null
 var mesh_instance = null
 
+var material = preload("res://Assets/Materials/new_spatialmaterial.tres")
+
 func _ready():
+	material.albedo_texture.set_flags(2)
+	generate()
 	update()
+
+func generate():
+	blocks = []
+	blocks.resize(Global.DIMENSION.x)
+	for i in range(0, Global.DIMENSION.x):
+		blocks[i]=[]
+		blocks[i].resize(Global.DIMENSION.y)
+		for j in range(0, Global.DIMENSION.y):
+			blocks[i][j]=[]
+			blocks[i][j].resize(Global.Dimension.z)
+			for k in range(0,Global.DIMENSION.z):
+				var block = Global.AIR
+				
+				if j < 16:
+					block = Global.STONE
+				elif j < 32:
+					block = Global.DIRT
+				elif j == 32:
+					block = Global.GRASS
+				blocks[i][j][k] = block
 
 func update():
 	if mesh_instance !=null:
@@ -43,8 +67,10 @@ func update():
 				create_block(x,y,z)
 
 	st.generate_normals(false)
+	st.set_material(material)
 	st.commit(mesh)
 	mesh_instance.set_mesh(mesh)
+	
 	add_child(mesh_instance)
 	mesh_instance.create_trimesh_collision()
 	
